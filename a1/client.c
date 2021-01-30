@@ -15,54 +15,42 @@
 
 #define SA struct sockaddr
 
+char recvBuffer[1000],sendBuffer[1000];
+
 void send_chat(int sockfd)
 {
+    int n;
+    for (;;) {
+        bzero(sendBuffer, sizeof(sendBuffer));
+        printf("Enter the message : ");
+        n = 0;
+        while ((sendBuffer[n++] = getchar()) != '\n'); //check for enter key
+        write(sockfd, sendBuffer, sizeof(sendBuffer)); //write to the socket
 
-  bzero(&sendBuffer,sizeof(sendBuffer));
-  printf("\nType a message here ...  ");
-  /*This function is used to read from server*/
-  fgets(sendBuffer,10000,stdin);
-  /*Send the message to server*/
-  send(sockfd,sendBuffer,strlen(sendBuffer)+1,0);
-  printf("\nMessage sent !\n");
-    // char buff[MAX];
-    // int n;
-    // for (;;) {
-    //     bzero(buff, sizeof(buff));
-    //     printf("Enter the message : ");
-    //     n = 0;
-    //     while ((buff[n++] = getchar()) != '\n'); //check for enter key
-    //     write(sockfd, buff, sizeof(buff)); //write to the socket
-    //
-    //     //exit case
-    //     if ((strncmp(buff, "exit", 4)) == 0) {
-    //         printf("Client Exit...\n");
-    //         break;
-    //     }
-    // }
+        //exit case
+        if ((strncmp(sendBuffer, "exit", 4)) == 0) {
+            printf("Client Exit...\n");
+            break;
+        }
+    }
 }
 
 void receive_chat(int sockfd){
 
-  bzero(&recvBuffer,sizeof(recvBuffer));
-  /*Receive the message from server*/
-  recv(sockfd,recvBuffer,sizeof(recvBuffer),0);
-  printf("\nSERVER : %s\n",recvBuffer);
-  // char buff[MAX];
-  // int n;
-  // for(;;){
-  //   bzero(buff, sizeof(buff));
-  //   n = 0;
-  //   if(read(sockfd, buff, sizeof(buff)) != 0) //read from the socket
-  //     printf("Server says : %s", buff);
-  //
-  //   //exit case
-  //   if ((strncmp(buff, "exit", 4)) == 0) {
-  //       printf("Client Exit...\n");
-  //       break;
-  //   }
-  //
-  // }
+  int n;
+  for(;;){
+    bzero(recvBuffer, sizeof(recvBuffer));
+    n = 0;
+    if(read(sockfd, recvBuffer, sizeof(recvBuffer)) != -1) //read from the socket
+      printf("Server says : %s", recvBuffer);
+
+    //exit case
+    if ((strncmp(recvBuffer, "exit", 4)) == 0) {
+        printf("Client Exit...\n");
+        break;
+    }
+
+  }
 }
 
 int main()
