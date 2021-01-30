@@ -40,8 +40,8 @@ void receive_chat(int sockfd){
   for(;;){
     bzero(buff, sizeof(buff));
     n = 0;
-    read(sockfd, buff, sizeof(buff)); //read from the socket
-    printf("Server says : %s", buff);
+    if(read(sockfd, buff, sizeof(buff)) != 0) //read from the socket
+      printf("Server says : %s", buff);
 
     //exit case
     if ((strncmp(buff, "exit", 4)) == 0) {

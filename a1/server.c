@@ -23,7 +23,7 @@
 //     for (;;) {
 //         bzero(buff, MAX);
 //
-//         // read the message from client and copy it in buffer 
+//         // read the message from client and copy it in buffer
 //         read(sockfd, buff, sizeof(buff));
 //         // print buffer which contains the client contents
 //         printf("From client: %s\t To client : ", buff);
@@ -70,12 +70,12 @@ void receive_chat(int sockfd){
   for(;;){
     bzero(buff, sizeof(buff));
     n = 0;
-    read(sockfd, buff, sizeof(buff)); //read from the socket
-    printf("Server says : %s", buff);
+    if (read(sockfd, buff, sizeof(buff)) != 0) //read from the socket
+      printf("Client says : %s", buff);
 
     //exit case
     if ((strncmp(buff, "exit", 4)) == 0) {
-        printf("Client Exit...\n");
+        printf("Server Exit...\n");
         break;
     }
 
