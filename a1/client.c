@@ -30,7 +30,7 @@ void send_chat(int sockfd)
     //exit case
     if ((strncmp(sendBuffer, "exit", 4)) == 0) {
         printf("Client Exit...\n");
-        break;
+        exit(0);
     }
 
 }
@@ -47,7 +47,7 @@ void receive_chat(int sockfd){
   //exit case
   if ((strncmp(recvBuffer, "exit", 4)) == 0) {
       printf("Client Exit...\n");
-      break;
+      exit(0);
   }
 
 
