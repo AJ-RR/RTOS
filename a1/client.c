@@ -20,37 +20,37 @@ char recvBuffer[1000],sendBuffer[1000];
 void send_chat(int sockfd)
 {
     int n;
-    for (;;) {
-        bzero(sendBuffer, sizeof(sendBuffer));
-        printf("Enter the message : ");
-        n = 0;
-        while ((sendBuffer[n++] = getchar()) != '\n'); //check for enter key
-        write(sockfd, sendBuffer, sizeof(sendBuffer)); //write to the socket
 
-        //exit case
-        if ((strncmp(sendBuffer, "exit", 4)) == 0) {
-            printf("Client Exit...\n");
-            break;
-        }
+    bzero(sendBuffer, sizeof(sendBuffer));
+    printf("Enter the message : ");
+    n = 0;
+    while ((sendBuffer[n++] = getchar()) != '\n'); //check for enter key
+    write(sockfd, sendBuffer, sizeof(sendBuffer)); //write to the socket
+
+    //exit case
+    if ((strncmp(sendBuffer, "exit", 4)) == 0) {
+        printf("Client Exit...\n");
+        break;
     }
+
 }
 
 void receive_chat(int sockfd){
 
   int n;
-  for(;;){
-    bzero(recvBuffer, sizeof(recvBuffer));
-    n = 0;
-    if(read(sockfd, recvBuffer, sizeof(recvBuffer)) != -1) //read from the socket
-      printf("Server says : %s", recvBuffer);
 
-    //exit case
-    if ((strncmp(recvBuffer, "exit", 4)) == 0) {
-        printf("Client Exit...\n");
-        break;
-    }
+  bzero(recvBuffer, sizeof(recvBuffer));
+  n = 0;
+  if(read(sockfd, recvBuffer, sizeof(recvBuffer)) != -1) //read from the socket
+    printf("Server says : %s", recvBuffer);
 
+  //exit case
+  if ((strncmp(recvBuffer, "exit", 4)) == 0) {
+      printf("Client Exit...\n");
+      break;
   }
+
+
 }
 
 int main()
@@ -85,11 +85,17 @@ int main()
 
     if(!fork()){
       // half_duplex chat
-      send_chat(sockfd);
+      while(1){
+        send_chat(sockfd);
+      }
+
     }
     else{
       //full_duplex chat
-      receive_chat(sockfd);
+      while(1){
+        receive_chat(sockfd);
+      }
+
     }
 
     // close the socket
