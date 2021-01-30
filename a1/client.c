@@ -25,7 +25,7 @@ void send_chat(int sockfd)
     printf("Enter the message : ");
     // n = 0;
     // while ((sendBuffer[n++] = getchar()) != '\n'); //check for enter key
-    gets(sendBuffer)
+    gets(sendBuffer);
     write(sockfd, sendBuffer, sizeof(sendBuffer)); //write to the socket
 
     //exit case
@@ -44,7 +44,7 @@ void receive_chat(int sockfd){
   n = 0;
   if(read(sockfd, recvBuffer, sizeof(recvBuffer)) != 0) //read from the socket
     // printf("Server says : %s", recvBuffer);
-    puts(recvBuffer)
+    puts(recvBuffer);
 
   //exit case
   if ((strncmp(recvBuffer, "exit", 4)) == 0) {
