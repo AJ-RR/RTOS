@@ -11,8 +11,11 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
+
 #define PORT 8080
 #define SA struct sockaddr
+
+char recvBuffer[1000],sendBuffer[1000];
 
 // Function designed for chat between client and server.
 // void func(int sockfd)
@@ -47,39 +50,53 @@
 
 void send_chat(int sockfd)
 {
-    char buff[MAX];
-    int n;
-    for (;;) {
-        bzero(buff, sizeof(buff));
-        printf("Enter the message : ");
-        n = 0;
-        while ((buff[n++] = getchar()) != '\n'); //check for enter key
-        write(sockfd, buff, sizeof(buff)); //write to the socket
+    bzero(&sendBuffer,sizeof(sendBuffer));
+    printf("\nType a message here ...  ");
+    /*Read the message from client*/
+    fgets(sendBuffer,10000,stdin);
+    /*Sends the message to client*/
+    send(clientSocketDescriptor,sendBuffer,strlen(sendBuffer)+1,0);
+    printf("\nMessage sent !\n");
 
-        //exit case
-        if ((strncmp(buff, "exit", 4)) == 0) {
-            printf("Client Exit...\n");
-            break;
-        }
-    }
+
+    // char buff[MAX];
+    // int n;
+    // for (;;) {
+    //     bzero(buff, sizeof(buff));
+    //     printf("Enter the message : ");
+    //     n = 0;
+    //     while ((buff[n++] = getchar()) != '\n'); //check for enter key
+    //     write(sockfd, buff, sizeof(buff)); //write to the socket
+    //
+    //     //exit case
+    //     if ((strncmp(buff, "exit", 4)) == 0) {
+    //         printf("Client Exit...\n");
+    //         break;
+    //     }
+    // }
 }
 
 void receive_chat(int sockfd){
-  char buff[MAX];
-  int n;
-  for(;;){
-    bzero(buff, sizeof(buff));
-    n = 0;
-    if (read(sockfd, buff, sizeof(buff)) != 0) //read from the socket
-      printf("Client says : %s", buff);
 
-    //exit case
-    if ((strncmp(buff, "exit", 4)) == 0) {
-        printf("Server Exit...\n");
-        break;
-    }
-
-  }
+  bzero(&recvBuffer,sizeof(recvBuffer));
+  /*Receiving the request from client*/
+  recv(clientSocketDescriptor,recvBuffer,sizeof(recvBuffer),0);
+  printf("\nCLIENT : %s\n",recvBuffer);
+  // char buff[MAX];
+  // int n;
+  // for(;;){
+  //   bzero(buff, sizeof(buff));
+  //   n = 0;
+  //   if (read(sockfd, buff, sizeof(buff)) != -1) //read from the socket
+  //     printf("Client says : %s", buff);
+  //
+  //   //exit case
+  //   if ((strncmp(buff, "exit", 4)) == 0) {
+  //       printf("Server Exit...\n");
+  //       break;
+  //   }
+  //
+  // }
 }
 // Driver function
 int main()
