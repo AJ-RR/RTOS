@@ -23,7 +23,7 @@ void send_chat(int sockfd)
   /*This function is used to read from server*/
   fgets(sendBuffer,10000,stdin);
   /*Send the message to server*/
-  send(socketDescriptor,sendBuffer,strlen(sendBuffer)+1,0);
+  send(sockfd,sendBuffer,strlen(sendBuffer)+1,0);
   printf("\nMessage sent !\n");
     // char buff[MAX];
     // int n;
@@ -46,7 +46,7 @@ void receive_chat(int sockfd){
 
   bzero(&recvBuffer,sizeof(recvBuffer));
   /*Receive the message from server*/
-  recv(socketDescriptor,recvBuffer,sizeof(recvBuffer),0);
+  recv(sockfd,recvBuffer,sizeof(recvBuffer),0);
   printf("\nSERVER : %s\n",recvBuffer);
   // char buff[MAX];
   // int n;

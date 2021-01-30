@@ -55,7 +55,7 @@ void send_chat(int sockfd)
     /*Read the message from client*/
     fgets(sendBuffer,10000,stdin);
     /*Sends the message to client*/
-    send(clientSocketDescriptor,sendBuffer,strlen(sendBuffer)+1,0);
+    send(sockfd,sendBuffer,strlen(sendBuffer)+1,0);
     printf("\nMessage sent !\n");
 
 
@@ -80,7 +80,7 @@ void receive_chat(int sockfd){
 
   bzero(&recvBuffer,sizeof(recvBuffer));
   /*Receiving the request from client*/
-  recv(clientSocketDescriptor,recvBuffer,sizeof(recvBuffer),0);
+  recv(sockfd,recvBuffer,sizeof(recvBuffer),0);
   printf("\nCLIENT : %s\n",recvBuffer);
   // char buff[MAX];
   // int n;
