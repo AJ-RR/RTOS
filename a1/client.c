@@ -15,44 +15,41 @@
 
 #define SA struct sockaddr
 
-char recvBuffer[1000],sendBuffer[1000];
-
 void send_chat(int sockfd)
 {
-    // int n;
+    char buff[MAX];
+    int n;
+    for (;;) {
+        bzero(buff, sizeof(buff));
+        printf("Enter the message : ");
+        n = 0;
+        while ((buff[n++] = getchar()) != '\n'); //check for enter key
+        write(sockfd, buff, sizeof(buff)); //write to the socket
 
-    bzero(sendBuffer, sizeof(sendBuffer));
-    printf("Enter the message : ");
-    // n = 0;
-    // while ((sendBuffer[n++] = getchar()) != '\n'); //check for enter key
-    gets(sendBuffer);
-    write(sockfd, sendBuffer, sizeof(sendBuffer)); //write to the socket
-
-    //exit case
-    if ((strncmp(sendBuffer, "exit", 4)) == 0) {
-        printf("Client Exit...\n");
-        exit(0);
+        //exit case
+        if ((strncmp(buff, "exit", 4)) == 0) {
+            printf("Client Exit...\n");
+            break;
+        }
     }
-
 }
 
 void receive_chat(int sockfd){
-
+  char buff[MAX];
   int n;
+  for(;;){
+    bzero(buff, sizeof(buff));
+    n = 0;
+    read(sockfd, buff, sizeof(buff)); //read from the socket
+    printf("Server says : %s", buff);
 
-  bzero(recvBuffer, sizeof(recvBuffer));
-  n = 0;
-  if(read(sockfd, recvBuffer, sizeof(recvBuffer)) != 0) //read from the socket
-    // printf("Server says : %s", recvBuffer);
-    puts(recvBuffer);
+    //exit case
+    if ((strncmp(buff, "exit", 4)) == 0) {
+        printf("Client Exit...\n");
+        break;
+    }
 
-  //exit case
-  if ((strncmp(recvBuffer, "exit", 4)) == 0) {
-      printf("Client Exit...\n");
-      exit(0);
   }
-
-
 }
 
 int main()
@@ -87,17 +84,11 @@ int main()
 
     if(!fork()){
       // half_duplex chat
-      while(1){
-        send_chat(sockfd);
-      }
-
+      send_chat(sockfd);
     }
     else{
       //full_duplex chat
-      while(1){
-        receive_chat(sockfd);
-      }
-
+      receive_chat(sockfd);
     }
 
     // close the socket
