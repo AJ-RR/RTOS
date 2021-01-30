@@ -51,11 +51,12 @@ char recvBuffer[1000],sendBuffer[1000];
 void send_chat(int sockfd)
 {
 
-    int n;
+    // int n;
     bzero(sendBuffer, sizeof(sendBuffer));
     printf("Enter the message : ");
-    n = 0;
-    while ((sendBuffer[n++] = getchar()) != '\n'); //check for enter key
+    // n = 0;
+    // while ((sendBuffer[n++] = getchar()) != '\n'); //check for enter key
+    gets(sendBuffer)
     write(sockfd, sendBuffer, sizeof(sendBuffer)); //write to the socket
 
     //exit case
@@ -68,12 +69,13 @@ void send_chat(int sockfd)
 
 void receive_chat(int sockfd){
 
-  int n;
+  // int n;
 
   bzero(recvBuffer, sizeof(recvBuffer));
-  n = 0;
+  // n = 0;
   if (read(sockfd, recvBuffer, sizeof(recvBuffer)) != -1) //read from the socket
-    printf("Client says : %s", recvBuffer);
+    // printf("Client says : %s", recvBuffer);
+    puts(recvBuffer);
 
   //exit case
   if ((strncmp(recvBuffer, "exit", 4)) == 0) {
