@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include<pthread.h>
+#include<stdatomic.h>
 
 #define MAX 80
 #define PORT 8090
@@ -17,20 +18,26 @@
 int connfds[MAX] = {0};
 int curr_clients = 0;
 
+pthread_mutex_t num_client_mutex;
+
 void receive_chat(int sockfd, int id){
   char buff[MAX];
-  int n;
-  int rd;
+  int n, rd, num_clients = 0;
   for (;;) {
       bzero(buff, MAX);
 
-      rd = read(sockfd, buff, sizeof(buff));
+      if((rd = read(sockfd, buff, sizeof(buff))) == -1){
+        perror("Error reading from client\n");
+      }
 
-      if(rd != 0 && rd != -1){
-        for(int j=0; j<=curr_clients; j++){
-          if(connfds[j] != sockfd){
+      if(rd != 0){
+        // pthread_mutex_lock(&num_client_mutex);
+        // num_clients = curr_clients;
+        // pthread_mutex_unlock(&num_client_mutex);
+
+        for(int j=0; j<MAX; j++){
+          if(connfds[j] != sockfd && connfds[j] !=0){
             char clientId[100];
-            // itoa(j, clientId, 10);
             sprintf(clientId, "%d", id);
             strcat(clientId," says: ");
             strcat(clientId, buff);
@@ -107,7 +114,9 @@ int main()
       if(pthread_create(&threads[i++], NULL, client_handler,(void*) &connfd) < 0 ){
         perror("Failed to create thread\n");
       }
+      pthread_mutex_lock(&num_client_mutex);
       curr_clients++;
+      pthread_mutex_unlock(&num_client_mutex);
     }
 
     pthread_exit(NULL);
