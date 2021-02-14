@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
 #include <netdb.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -12,6 +13,16 @@
 #define MAX 80
 #define PORT 8090
 #define SA struct sockaddr
+
+int sockfd, connfd;
+
+void close_isr(int signum) {
+	if(signum == SIGINT) {
+		printf("Closed the connection\n");
+		close(sockfd);
+		exit(0);
+	}
+}
 
 void send_chat(int sockfd)
 {
@@ -46,7 +57,7 @@ void receive_chat(int sockfd){
 
 int main()
 {
-    int sockfd, connfd;
+
     struct sockaddr_in servaddr, cli;
 
     // Create and verify the socket

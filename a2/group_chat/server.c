@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
 #include <netdb.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -15,10 +16,27 @@
 #define PORT 8090
 #define SA struct sockaddr
 
+int sockfd; //server socketfd
 int connfds[MAX] = {0};
 int curr_clients = 0;
 
 pthread_mutex_t num_client_mutex;
+pthread_t threads[MAX]; //maximum number of clients and threads
+
+void close_isr(int signum) {
+	if(signum == SIGINT) {
+		printf("Closing server\n");
+		for (int i = 0; i < curr_clients; i++) {
+            pthread_kill(threads[i], SIGKILL);
+        }
+		for(int i = 0; i < curr_clients; i++) {
+			close(connfds[i]);
+		}
+		close(sockfd);
+		pthread_exit(NULL);
+		exit(0);
+	}
+}
 
 void receive_chat(int sockfd, int id){
   char buff[MAX];
@@ -27,15 +45,11 @@ void receive_chat(int sockfd, int id){
       bzero(buff, MAX);
 
       if((rd = read(sockfd, buff, sizeof(buff))) == -1){
+
         perror("Error reading from client\n");
       }
-
       if(rd != 0){
-        // pthread_mutex_lock(&num_client_mutex);
-        // num_clients = curr_clients;
-        // pthread_mutex_unlock(&num_client_mutex);
-
-        for(int j=0; j<MAX; j++){
+        for(int j=0; j<curr_clients; j++){
           if(connfds[j] != sockfd && connfds[j] !=0){
             char clientId[100];
             sprintf(clientId, "%d", id);
@@ -45,8 +59,22 @@ void receive_chat(int sockfd, int id){
           }
         }
       }
+      else{
+        int pos;
+        for(int i = 0; i < curr_clients; i++) {
+        	if(sockfd == connfds[i]) {
+        		pos = i;
+        	}
+        }
+        for(int i = pos; i < curr_clients; i++) {
+        	connfds[i] = connfds[i+1];
+        }
+	      curr_clients--;
+        break;
+      }
   }
 }
+
 
 void * client_handler(void * arg){
 
@@ -56,10 +84,8 @@ void * client_handler(void * arg){
 
 int main()
 {
-    int sockfd, connfd, len;
+    int connfd, len;
     struct sockaddr_in servaddr, cli;
-    pthread_t threads[MAX]; //maximum number of clients
-
 
     // create and verify socket
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -111,9 +137,6 @@ int main()
       if(pthread_create(&threads[i++], NULL, client_handler, (void*) &connfd) < 0 )
             perror("Failed to create thread\n");
 
-      if(pthread_create(&threads[i++], NULL, client_handler,(void*) &connfd) < 0 ){
-        perror("Failed to create thread\n");
-      }
       pthread_mutex_lock(&num_client_mutex);
       curr_clients++;
       pthread_mutex_unlock(&num_client_mutex);
