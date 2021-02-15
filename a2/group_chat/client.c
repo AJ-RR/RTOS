@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #define MAX 80
-#define PORT 8090
+#define PORT 8080
 #define SA struct sockaddr
 
 int sockfd, connfd;
@@ -73,7 +73,7 @@ int main()
     // assign port and ip
     servaddr.sin_family = AF_INET;
     // servaddr.sin_addr.s_addr = inet_addr("40.70.68.58");
-    servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    servaddr.sin_addr.s_addr = inet_addr("40.70.68.58");
     servaddr.sin_port = htons(PORT);
 
     // connect to client
