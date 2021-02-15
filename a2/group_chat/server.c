@@ -75,10 +75,24 @@ void receive_chat(int sockfd, int id){
   }
 }
 
+void register_client(int sockfd){
+  char reg_id[100];
+  sprintf(reg_id, "%d", curr_clients);
+  strcat(reg_id, " is your ID");
+
+  if((write(sockfd, reg_id, sizeof(reg_id))) == -1){
+    perror("Could not register client\n");
+  }
+  else{
+    printf("Client %d has been successfully registered\n", curr_clients);
+  }
+
+}
 
 void * client_handler(void * arg){
 
   int newSocket = *((int*) arg);
+	register_client(newSocket);
   receive_chat(newSocket, curr_clients);
 }
 
