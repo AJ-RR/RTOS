@@ -132,39 +132,6 @@ int get_chat_type(int sockfd){
   return ans;
 }
 
-// void personal_chat(int sockfd){
-//   char question[] = "Who do you want to chat with? (enter the id)";
-//   char answer[100];
-//   int ans;
-//
-//   if((write(sockfd, question, sizeof(question))) == -1){
-//     perror("Could not request client for the type of chat service\n");
-//   }
-//   else{
-//     if((read(sockfd, answer, sizeof(answer))) == -1){
-//       perror("Failed to receive chat type info\n");
-//     }
-//     else{
-//       ans = atoi(answer);
-//     }
-//   }
-//
-//   if(ans > curr_clients){
-//     char serv_reply[] = "Sorry, the client is unavailable";
-//     if((write(sockfd, serv_reply, sizeof(serv_reply))) == -1){
-//       perror("Could not respond to client\n");
-//       return;
-//     }
-//   }
-//   else{
-//     char serv_reply[] = "Successfully connected";
-//     if((write(sockfd, serv_reply, sizeof(serv_reply))) == -1){
-//       perror("Could not respond to client\n");
-//       return;
-//     }
-//   }
-//
-// }
 
 void * client_handler(void * arg){
 
