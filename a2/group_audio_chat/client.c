@@ -110,7 +110,7 @@ int main()
     struct sockaddr_in servaddr, cli;
 
     // Create and verify the socket
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         printf("socket creation failed...\n");
         exit(0);
