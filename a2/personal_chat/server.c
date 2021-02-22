@@ -16,12 +16,12 @@
 #define PORT 8080
 #define SA struct sockaddr
 
-int sockfd; //server socketfd
+int sockfd; //server socket descriptor
 int connfds[MAX] = {0};
 int curr_clients = 0;
 
 pthread_mutex_t num_client_mutex;
-pthread_t threads[MAX]; //maximum number of clients and threads
+pthread_t threads[MAX]; //client threads
 
 void close_isr(int signum) {
 	if(signum == SIGINT) {
@@ -45,7 +45,6 @@ void receive_chat(int sockfd, int id, int chat_type){
       bzero(buff, MAX);
 
       if((rd = read(sockfd, buff, sizeof(buff))) == -1){
-
         perror("Error reading from client\n");
       }
       if(rd != 0){
@@ -85,6 +84,7 @@ void receive_chat(int sockfd, int id, int chat_type){
       }
   }
 }
+
 
 void register_client(int sockfd){
   char reg_id[100];

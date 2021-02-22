@@ -53,8 +53,6 @@ void send_chat(int sockfd)
             fprintf(stderr, __FILE__": read() failed: %s\n", strerror(errno));
             goto finish;
         }
-		// memcpy(buf, message->msg, sizeof(buf));
-		// printf("%s says : \n", message.name);
         /* ... and play it */
         if (pa_simple_write(s, message->msg, sizeof(message->msg), &error) < 0) {
             fprintf(stderr, __FILE__": pa_simple_write() failed: %s\n", pa_strerror(error));
@@ -73,17 +71,6 @@ void send_chat(int sockfd)
 
 		return NULL;
 
-    // char buff[MAX_CLIENTS];
-    // int n;
-		//
-    // for (;;) {
-    //     bzero(buff, MAX_CLIENTS);
-    //     n = 0;
-		//
-    //     while ((buff[n++] = getchar()) != '\n');
-		//
-    //     write(sockfd, buff, sizeof(buff));
-    // }
 }
 
 void receive_chat(int sockfd){
@@ -103,8 +90,7 @@ void receive_chat(int sockfd){
             fprintf(stderr, __FILE__": pa_simple_read() failed: %s\n", pa_strerror(error));
             goto finish;
         }
-		// memcpy(message->msg, buf, sizeof(buf));
-		// strcpy(message.name, name);
+
         /* And write it to STDOUT */
         if (write(sockfd, message, sizeof(*message)) != sizeof(*message)) {
             fprintf(stderr, __FILE__": write() failed: %s\n", strerror(errno));
@@ -116,17 +102,6 @@ void receive_chat(int sockfd){
     if (s)
 		pa_simple_free(s);
 
-  // char buff[MAX_CLIENTS];
-  // int n;
-  // int rd;
-  // for (;;) {
-  //     bzero(buff, MAX_CLIENTS);
-	//
-  //     rd = read(sockfd, buff, sizeof(buff));
-	//
-  //     if(rd != 0)
-  //       printf("%s\n ", buff);
-  // }
 }
 
 int main()
@@ -135,7 +110,7 @@ int main()
     struct sockaddr_in servaddr, cli;
 
     // Create and verify the socket
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (sockfd == -1) {
         printf("socket creation failed...\n");
         exit(0);
@@ -147,7 +122,8 @@ int main()
     // assign port and ip
     servaddr.sin_family = AF_INET;
     // servaddr.sin_addr.s_addr = inet_addr("40.70.68.58");
-		servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+		servaddr.sin_addr.s_addr = inet_addr("40.121.60.204");
+		// servaddr.sin_addr.s_addr = inet_addr("52.149.151.135");
 		servaddr.sin_port = htons(PORT);
 
     // connect to client

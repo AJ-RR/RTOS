@@ -64,13 +64,13 @@ void receive_chat(int sockfd, int id){
         }
       }
       else{
-        int pos;
+        int loc;
         for(int i = 0; i < curr_clients; i++) {
         	if(sockfd == connfds[i]) {
-        		pos = i;
+        		loc = i;
         	}
         }
-        for(int i = pos; i < curr_clients; i++) {
+        for(int i = loc; i < curr_clients; i++) {
         	connfds[i] = connfds[i+1];
         }
 	      curr_clients--;
@@ -106,7 +106,7 @@ int main()
     struct sockaddr_in servaddr, cli;
 		signal(SIGINT, close_isr);
     // create and verify socket
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (sockfd == -1) {
         printf("Falied to create the socket\n");
         exit(0);
